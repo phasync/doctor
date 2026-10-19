@@ -44,6 +44,8 @@ final class Project
         public readonly ?string $root = null,
         public readonly ?array $framework = null,
         public readonly ?array $adapter = null,
+        /** @var list<string> real paths of composer.json's autoload-dev entries: test code, never loaded by a worker */
+        public readonly array $devPaths = [],
     ) {
     }
 
@@ -62,6 +64,19 @@ final class Project
         $root  = self::nearest($start);
         if (null === $root) {
             return new self();
+        }
+
+        $devPaths = [];
+        if (\is_file("$root/composer.json")) {
+            $dev = \json_decode((string) \file_get_contents("$root/composer.json"), true)['autoload-dev'] ?? [];
+            foreach ([...$dev['psr-4'] ?? [], ...$dev['psr-0'] ?? [], ...$dev['classmap'] ?? [], ...$dev['files'] ?? []] as $paths) {
+                foreach ((array) $paths as $p) {
+                    $real = \realpath("$root/$p");
+                    if (false !== $real && !\str_contains("$real/", '/vendor/')) {
+                        $devPaths[] = $real;
+                    }
+                }
+            }
         }
 
         $packages = [];
@@ -83,16 +98,17 @@ final class Project
                     $root,
                     ['name' => $name, 'package' => $package, 'version' => $packages[$package]],
                     ['package' => $adapter, 'version' => $packages[$adapter] ?? null, 'installed' => \array_key_exists($adapter, $packages), 'concurrency' => $concurrency],
+                    $devPaths,
                 );
             }
         }
         foreach ($packages as $package => $version) {
             if (\str_starts_with($package, 'phasync/swerve-')) {
-                return new self($root, null, ['package' => $package, 'version' => $version, 'installed' => true, 'concurrency' => 'concurrent']);
+                return new self($root, null, ['package' => $package, 'version' => $version, 'installed' => true, 'concurrency' => 'concurrent'], $devPaths);
             }
         }
 
-        return new self($root);
+        return new self($root, devPaths: $devPaths);
     }
 
     /** True when the adapter runs one request at a time per worker. */

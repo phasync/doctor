@@ -18,7 +18,7 @@ vendor/bin/phasync-doctor [path ...] [options]
 
 | Option | |
 | --- | --- |
-| `path` | Files or directories to scan for `*.php`; default the current directory. Directories named `vendor`, `node_modules`, `storage`, `cache`, `writable`, `runtime`, `tmp` and `.git` are skipped. |
+| `path` | Files or directories to scan for `*.php`; default the current directory. Directories named `vendor`, `node_modules`, `storage`, `cache`, `writable`, `runtime`, `tmp` and `.git` are skipped. So are the project's `autoload-dev` paths from `composer.json` (test code a worker never loads), unless given as the path. |
 | `--include-vendor` | Scan `vendor/` directories too. To check one package, give its directory as the path instead. |
 | `--format=text\|json` | `text` (default): grouped by rule, advice and question once per rule, a summary table. `json`: the schema below. |
 | `--verbose` | Text: every write and read site, and each finding's ready code. |

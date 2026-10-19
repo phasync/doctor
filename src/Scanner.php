@@ -105,9 +105,11 @@ final class Scanner
             return;
         }
         $skipped = $this->includeVendor ? self::SKIPPED_DIRECTORIES : [...self::SKIPPED_DIRECTORIES, 'vendor'];
+        $dev     = $this->project->devPaths;
         $it      = new \RecursiveIteratorIterator(new \RecursiveCallbackFilterIterator(
             new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
-            static fn (\SplFileInfo $f) => !$f->isDir() || !\in_array($f->getFilename(), $skipped, true),
+            static fn (\SplFileInfo $f) => !\in_array(\realpath($f->getPathname()), $dev, true)
+                && (!$f->isDir() || !\in_array($f->getFilename(), $skipped, true)),
         ));
         $files = [];
         foreach ($it as $f) {

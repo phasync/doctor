@@ -1,0 +1,1 @@
+{"name": "acme/devpaths", "require": {"php": "^8.2"}, "autoload-dev": {"psr-4": {"Acme\\Tests\\": "tests/"}}}

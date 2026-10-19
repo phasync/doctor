@@ -147,3 +147,10 @@ it('runs as an executable with the documented exit codes', function () {
 
     expect([$withError, $clean, $usage])->toBe([1, 0, 2]);
 });
+
+test('autoload-dev paths are test code a worker never loads: skipped, unless given as the path', function () {
+    $symbols = fn (string $path) => \array_column(\json_decode(cli('--format=json', $path)[1], true, flags: \JSON_THROW_ON_ERROR)['findings'], 'symbol');
+
+    expect($symbols(FIXTURES . '/projects/devpaths'))->toBe(['Acme\Clock::$now'])
+        ->and($symbols(FIXTURES . '/projects/devpaths/tests'))->toBe(['Acme\Tests\ClockTest::$runs']);
+});
