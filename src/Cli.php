@@ -5,7 +5,7 @@ namespace Phasync\Doctor;
 /** Command line entry point. */
 final class Cli
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.1.1';
 
     private const USAGE = <<<'TXT'
         Usage: phasync-doctor [path ...] [options]
