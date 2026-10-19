@@ -1,0 +1,46 @@
+{
+    "name": "phasync/doctor",
+    "description": "Static scanner that reports process-global state patterns which misbehave when several requests overlap in one PHP worker.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "phasync",
+        "swerve",
+        "static analysis",
+        "fibers",
+        "linter"
+    ],
+    "authors": [
+        {
+            "name": "Frode Børli",
+            "email": "frode@ennerd.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "nikic/php-parser": "^5.0",
+        "roave/better-reflection": "^6.0"
+    },
+    "require-dev": {
+        "pestphp/pest": "^3.0 || ^4.0",
+        "friendsofphp/php-cs-fixer": "^3.58"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phasync\\Doctor\\": "src/"
+        }
+    },
+    "bin": [
+        "bin/phasync-doctor"
+    ],
+    "scripts": {
+        "test": "@php vendor/bin/pest --stop-on-defect",
+        "php-cs-fixer": "vendor/bin/php-cs-fixer fix --verbose",
+        "php-cs-fixer-dry-run": "vendor/bin/php-cs-fixer fix --verbose --diff --dry-run"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php'] as $autoload) {
+    if (is_file($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+try {
+    exit(Phasync\Doctor\Cli::run(\array_slice($argv, 1), STDOUT, STDERR));
+} catch (Throwable $e) {
+    fwrite(STDERR, 'phasync-doctor: ' . $e::class . ': ' . $e->getMessage() . "\n");
+    exit(2);
+}
